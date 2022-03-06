@@ -1,12 +1,14 @@
 ## How to run this app?
+<ol>
 <li>Create a free rabbitmq server in https://www.cloudamqp.com/ - using the free plan</li>
-<li>Modify all consumer.py and producer.py and set the url of your cluster in params = pika.URLParameters('urlofyourcluster')</li>
-<li>If you are not in a MAC M1 remove the platform command from docker-compose of admin and main</li>
+<li>Modify all consumer.py and producer.py and set the url of your RabbitMQ Server in: params = pika.URLParameters('xxxx')
+<li>If you are not in a MAC M1 remove the platform command from docker-compose of "admin" and "main"</li>
 <li>Do docker-compose up in the admin app, and then inside the django backend container do "python manage.py makemigrations" and then "python manage.py migrate" - this will create the tables in mysql </li>
 <li>If everything is good in admin, go into main, and do docker-compose up</li>
 <li>Inside the flask backend container do: "flask manager.py db migrate" to create the tables for the main app in the 2nd mysql db</li>
+</ol>
+
 If you run into issues with the "flask manager.py db migrate": <br>
-Do:
 ```
 python manager.py db stamp head
 python manager.py db migrate
