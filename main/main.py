@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint, Index
 import requests
 import json
+import json as js
 from producer import publish
 
 app = Flask(__name__)
@@ -50,8 +51,9 @@ def like(id):
         db.session.commit()
 
         publish('product_liked', id)
-    except:
-        abort(400, 'You already liked this product')
+    except Exception as E:
+        print("log: exception: ", E)
+        abort(400, "Or you have already liked this product or something else failed")
 
     return jsonify({
         'message': 'success'

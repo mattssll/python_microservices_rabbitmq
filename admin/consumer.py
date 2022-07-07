@@ -1,16 +1,16 @@
 import pika, json, os, django
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "admin.settings")
-django.setup()
+from dotenv import load_dotenv
+import os
 
 from products.models import Product
 
-params = pika.URLParameters('xxxxx')
 
+django.setup()
+load_dotenv()
+
+params = pika.URLParameters(os.getenv('RABBIT_CLUSTER_URL'))
 connection = pika.BlockingConnection(params)
-
 channel = connection.channel()
-
 channel.queue_declare(queue='admin')
 
 
@@ -25,9 +25,6 @@ def callback(ch, method, properties, body):
 
 
 channel.basic_consume(queue='admin', on_message_callback=callback, auto_ack=True)
-
 print('Started Consuming')
-
 channel.start_consuming()
-
 channel.close()

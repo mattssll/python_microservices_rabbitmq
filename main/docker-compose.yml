@@ -10,15 +10,25 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
-  queue:
+
+  consumerqueue:
     build:
       context: .
       dockerfile: Dockerfile
     command: 'python -u consumer.py'
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
 
   db:
     platform: linux/x86_64
@@ -28,6 +38,10 @@ services:
       MYSQL_DATABASE: main
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 15
     volumes:
       - .dbdata:/var/lib/mysql
     ports:

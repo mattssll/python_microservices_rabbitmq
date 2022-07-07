@@ -1,12 +1,16 @@
 import pika, json
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-params = pika.URLParameters('xxxxxx')
 
-connection = pika.BlockingConnection(params)
-
-channel = connection.channel()
+params = pika.URLParameters(os.getenv('RABBIT_CLUSTER_URL'))
 
 
 def publish(method, body):
+    connection = pika.BlockingConnection(params)
+    channel = connection.channel()
     properties = pika.BasicProperties(method)
-    channel.basic_publish(exchange='', routing_key='admin', body=json.dumps(body), properties=properties)
+    channel.close()
+    connection.close()
+        

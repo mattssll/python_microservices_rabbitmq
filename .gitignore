@@ -2,3 +2,5 @@
 .idea
 .dbdata
 __pycache__
+.env
+.dbdata

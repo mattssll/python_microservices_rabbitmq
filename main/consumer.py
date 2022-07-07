@@ -1,13 +1,13 @@
 import pika, json
-
 from main import Product, db
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-params = pika.URLParameters('xxxxx')
 
+params = pika.URLParameters(os.getenv('RABBIT_CLUSTER_URL'))
 connection = pika.BlockingConnection(params)
-
 channel = connection.channel()
-
 channel.queue_declare(queue='main')
 
 
@@ -37,9 +37,7 @@ def callback(ch, method, properties, body):
 
 
 channel.basic_consume(queue='main', on_message_callback=callback, auto_ack=True)
-
 print('Started Consuming')
-
 channel.start_consuming()
 
 channel.close()
